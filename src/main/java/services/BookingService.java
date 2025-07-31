@@ -1,12 +1,13 @@
 package services;
 
 import config.Constants;
+import specs.RequestSpecifications;
 import io.restassured.response.Response;
 import models.BookingRequest;
 
-import java.awt.print.Book;
+import java.util.Map;
 
-import static core.RequestSpecifications.*;
+import static specs.RequestSpecifications.*;
 import static io.restassured.RestAssured.given;
 
 public class BookingService {
@@ -31,21 +32,21 @@ public class BookingService {
     }
 
     public static Response updateBooking(int id, BookingRequest bookingBody){
-        return given().spec(baseSpecUpdateBooking)
+        return given().spec(RequestSpecifications.baseSpecUpdateBooking())
                 .body(bookingBody)
                 .when().put(Constants.BOOKING_ENDPOINT + "/" + id)
                 .then().extract().response();
     }
 
-    public static Response partialUpdateBooking(int id, BookingRequest bookingBody){
-        return given().spec(baseSpecUpdateBooking)
-                .body(bookingBody)
+    public static Response partialUpdateBooking(int id, Map<String, Object> updates){
+        return given().spec(RequestSpecifications.baseSpecUpdateBooking())
+                .body(updates)
                 .when().patch(Constants.BOOKING_ENDPOINT + "/" + id)
                 .then().extract().response();
     }
 
     public static Response deleteBooking(int id){
-        return given().spec(baseSpecDeleteBooking)
+        return given().spec(RequestSpecifications.baseSpecDeleteBooking())
                 .when().delete(Constants.BOOKING_ENDPOINT + "/" + id)
                 .then().extract().response();
     }
