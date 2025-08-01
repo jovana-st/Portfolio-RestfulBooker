@@ -1,23 +1,30 @@
 package utils;
 
-import io.restassured.mapper.ObjectMapper;
-import io.restassured.mapper.ObjectMapperDeserializationContext;
-import io.restassured.mapper.ObjectMapperSerializationContext;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.List;
 
 public class JsonHelper {
 
-    private static final ObjectMapper mapper = new ObjectMapper() {
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
 
-        @Override
-        public Object deserialize(ObjectMapperDeserializationContext objectMapperDeserializationContext) {
-            return null;
-        }
+    //Serialize Object > JSON
+    public static String toJson(Object object){
+        return gson.toJson(object);
+    }
 
-        @Override
-        public Object serialize(ObjectMapperSerializationContext objectMapperSerializationContext) {
-            return null;
-        }
-    };
+    //Deserialize Json > Object
+    public static <T> T fromJson(String json, Class<T> deser){
+        return gson.fromJson(json, deser);
+    }
 
+    //Deserialize Json > List of Objects
+    public static <T> List<T> fromJsonList(String json, Class<T> deser){
+        return gson.fromJson(json, TypeToken.getParameterized(List.class, deser).getType());
+    }
 
 }

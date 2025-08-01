@@ -3,9 +3,8 @@ import com.github.javafaker.Faker;
 import models.AuthRequest;
 import models.BookingDates;
 import models.BookingRequest;
-
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
 
 public class TestDataGenerator {
 
@@ -22,9 +21,7 @@ public class TestDataGenerator {
         bookingRequest.setDepositpaid(faker.bool().bool());
         bookingRequest.setAdditionalneeds(faker.lorem().sentence(1));
 
-        BookingDates bookingDates = new BookingDates();
-        bookingDates.setCheckin(faker.date().future(1, 5, TimeUnit.DAYS));
-        bookingDates.setCheckout(faker.date().future(6, 10, TimeUnit.DAYS));
+        BookingDates bookingDates = new BookingDates(checkInGenerator(),checkOutGenerator());
 
         bookingRequest.setBookingDates(bookingDates);
 
@@ -32,9 +29,27 @@ public class TestDataGenerator {
 }
 
 
-    public static AuthRequest generateAuthRequest(){
-        AuthRequest auth = new AuthRequest(faker.name().username(), faker.internet().password());
-        return auth;
+    public static String generateAuthUsername(){
+         String username = faker.name().username();
+         return username;
+    }
+
+    public static String generateAuthPassword(){
+        String password = faker.internet().password();
+        return password;
+    }
+
+    public static LocalDate checkInGenerator(){
+        return LocalDate.now().plusDays(faker.number().numberBetween(1, 15));
+    }
+
+    public static LocalDate checkOutGenerator(){
+        return LocalDate.now().plusDays(faker.number().numberBetween(15, 30));
+    }
+
+    public static int generateInvalidBookingId(){
+        int id = faker.number().numberBetween(10000, 1500);
+        return id;
     }
 
 }

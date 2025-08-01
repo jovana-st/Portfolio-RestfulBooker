@@ -16,18 +16,18 @@ public class RequestSpecifications {
     public static RequestSpecification baseSpecCreateBooking = new RequestSpecBuilder().setBaseUri(Constants.BASE_URL)
             .addHeader("Content-Type", "application/json").build();
 
-    public static RequestSpecification baseSpecUpdateBooking(){
+    public static RequestSpecification baseSpecUpdateBooking(String username, String password){
         return new RequestSpecBuilder().setBaseUri(Constants.BASE_URL)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Acccept", "application/json")
-                .addHeader("Cookie", "token=" + AuthService.getAuthToken())
+                .addHeader("Cookie", "token=" + AuthService.getAuthToken(username, password))
                 .build();
     }
 
-    public static RequestSpecification baseSpecDeleteBooking(){
+    public static RequestSpecification baseSpecDeleteBooking(String username, String password){
         return new RequestSpecBuilder().setBaseUri(Constants.BASE_URL)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Cookie", "token=" + AuthService.getAuthToken())
+                .addHeader("Cookie", "token=" + AuthService.getAuthToken(username, password))
                 .build();
     }
 }
