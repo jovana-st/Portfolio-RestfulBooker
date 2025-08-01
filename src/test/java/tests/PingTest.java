@@ -1,6 +1,7 @@
 package tests;
 
 import config.Constants;
+import config.Endpoints;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 import utils.ApiAssertions;
@@ -12,10 +13,10 @@ public class PingTest {
     @Test(priority = 1)
     public void healthCheck(){
         Response response = given().baseUri(Constants.BASE_URL)
-                .when().get(Constants.PING_ENDPOINT)
+                .when().get(Endpoints.PING)
                 .then().extract().response();
 
-        ApiAssertions.assertStatusCode(response, 201);
+        ApiAssertions.softAssertStatusCode(response, 201);
     }
 
 }
