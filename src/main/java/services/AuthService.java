@@ -25,7 +25,7 @@ public class AuthService {
         try {
             cachedToken = given().spec(RequestSpecifications.baseSpecAuth).body(authBody)
                     .post(Endpoints.AUTH)
-                    .then().extract().path("token");
+                    .then().log().all().extract().path("token");
 
             tokenExpiryTime = System.currentTimeMillis() + TOKEN_TTL.toMillis();
             return cachedToken;
@@ -38,6 +38,6 @@ public class AuthService {
         return given().spec(RequestSpecifications.baseSpecAuth)
                 .body(authRequest)
                 .post(Endpoints.AUTH)
-                .then().extract().response();
+                .then().log().all().extract().response();
     }
 }

@@ -6,13 +6,10 @@ import java.time.LocalDate;
 @Data
 public class BookingDates {
 
-    LocalDate checkin;
-    LocalDate checkout;
+    private String checkin;
+    private String checkout;
 
-    public BookingDates(LocalDate checkin, LocalDate checkout){
-        if (checkout.isBefore(checkin)){
-            throw new IllegalArgumentException("Checkout must be after checkin.");
-        }
+    public BookingDates(String checkin, String checkout){
         this.checkin = checkin;
         this.checkout = checkout;
     }

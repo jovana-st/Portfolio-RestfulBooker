@@ -3,8 +3,11 @@ import com.github.javafaker.Faker;
 import models.AuthRequest;
 import models.BookingDates;
 import models.BookingRequest;
+import org.testng.internal.invokers.Arguments;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Stream;
 
 public class TestDataGenerator {
 
@@ -21,9 +24,10 @@ public class TestDataGenerator {
         bookingRequest.setDepositpaid(faker.bool().bool());
         bookingRequest.setAdditionalneeds(faker.lorem().sentence(1));
 
-        BookingDates bookingDates = new BookingDates(checkInGenerator(),checkOutGenerator());
-
-        bookingRequest.setBookingDates(bookingDates);
+        LocalDate checkIn = LocalDate.now().plusDays(faker.number().numberBetween(1,15));
+        LocalDate checkOut = checkIn.plusDays(faker.number().numberBetween(1,15));
+        BookingDates bookingDates = new BookingDates(checkIn.toString(),checkOut.toString());
+        bookingRequest.setBookingdates(bookingDates);
 
         return bookingRequest;
 }
