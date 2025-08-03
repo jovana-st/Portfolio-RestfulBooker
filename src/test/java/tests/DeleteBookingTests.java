@@ -3,6 +3,7 @@ package tests;
 import config.AuthConfig;
 import io.restassured.response.Response;
 import models.BookingRequest;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -12,7 +13,7 @@ import utils.TestDataGenerator;
 
 public class DeleteBookingTests {
 
-    int bookingId = -1;
+    private int bookingId;
 
     @BeforeMethod
     public void setupTestData(){
@@ -22,11 +23,18 @@ public class DeleteBookingTests {
         bookingId = createResponse.jsonPath().getInt("bookingid");
     }
 
+    @AfterMethod
+    public void cleanup(){
+        if (bookingId > 0){
+            BookingService.deleteBooking(AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId);
+        }
+    }
+
     @Test(description = "Delete a booking with invalid auth credentials")
     public void deleteBookingWrongAuth(){
         Response response = BookingService.deleteBooking(
                 TestDataGenerator.generateAuthUsername(), TestDataGenerator.generateAuthPassword(), bookingId);
-        ApiAssertions.assertStatusCode(response, 405);
+        ApiAssertions.assertStatusCode(response, 403);
     }
 
     @Test(description = "Delete a booking successfully")
