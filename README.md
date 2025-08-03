@@ -12,7 +12,7 @@ A **REST Assured-based** test automation framework for the [Restful-Booker API](
 ## 🔧 Setup (Temporary)
 
 1. **Prerequisites**:
-   - Java 11+
+   - Java 8+
    - Maven 3.8+
    - TestNG (configured in `pom.xml`)
 
