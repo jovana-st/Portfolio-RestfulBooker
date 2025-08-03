@@ -3,11 +3,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
-@Data
+@Value
 @AllArgsConstructor
 public class AuthRequest {
 
     @NonNull String username;
     @NonNull String password;
+
 
 }
