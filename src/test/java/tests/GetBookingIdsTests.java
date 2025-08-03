@@ -2,10 +2,12 @@ package tests;
 
 import io.restassured.response.Response;
 import models.BookingResponse;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import services.BookingService;
 import utils.ApiAssertions;
 import utils.JsonHelper;
+import utils.TestDataGenerator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,10 +20,10 @@ public class GetBookingIdsTests {
         //Status code is 200
         ApiAssertions.assertStatusCode(response, 200);
         //The response contains the required fields
-        List<BookingResponse> bookings = JsonHelper.fromJsonList(response.getBody().asString(), BookingResponse.class);
-        bookings.forEach(booking -> {
-            ApiAssertions.assertResponseContainsField(response, "bookingid");
-        });
+        List<BookingResponse> bookings = JsonHelper.fromJsonList(response.asString(), BookingResponse.class);
+        if(!bookings.isEmpty()){
+            bookings.forEach( b -> Assert.assertNotNull(b.getBookingid(), "Booking ID missing"));
+        }
         //The response structure is checked
         ApiAssertions.assertJsonSchema(response, "BookingIdsJsonSchemaFile.json");
         //The response time is under ms
@@ -34,10 +36,10 @@ public class GetBookingIdsTests {
         //Status code is 200
         ApiAssertions.assertStatusCode(response, 200);
         //The response contains the required fields
-        List<BookingResponse> bookings = JsonHelper.fromJsonList(response.getBody().asString(), BookingResponse.class);
-        bookings.forEach(booking -> {
-            ApiAssertions.assertResponseContainsField(response, "bookingid");
-        });
+        List<BookingResponse> bookings = JsonHelper.fromJsonList(response.asString(), BookingResponse.class);
+        if(!bookings.isEmpty()){
+            bookings.forEach( b -> Assert.assertNotNull(b.getBookingid(), "Booking ID missing"));
+        }
         //The response structure is checked
         ApiAssertions.assertJsonSchema(response, "BookingIdsJsonSchemaFile.json");
         //The response time is under ms
@@ -60,10 +62,10 @@ public class GetBookingIdsTests {
         //Status code is 200
         ApiAssertions.assertStatusCode(response, 200);
         //The response contains the required fields
-        List<BookingResponse> bookings = JsonHelper.fromJsonList(response.getBody().asString(), BookingResponse.class);
-        bookings.forEach(booking -> {
-            ApiAssertions.assertResponseContainsField(response, "bookingid");
-        });
+        List<BookingResponse> bookings = JsonHelper.fromJsonList(response.asString(), BookingResponse.class);
+        if(!bookings.isEmpty()){
+            bookings.forEach( b -> Assert.assertNotNull(b.getBookingid(), "Booking ID missing"));
+        }
         //The response structure is checked
         ApiAssertions.assertJsonSchema(response, "BookingIdsJsonSchemaFile.json");
         //The response time is under ms

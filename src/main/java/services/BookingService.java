@@ -1,6 +1,5 @@
 package services;
 
-import config.Constants;
 import config.Endpoints;
 import specs.RequestSpecifications;
 import io.restassured.response.Response;
@@ -22,19 +21,24 @@ public class BookingService {
 
     public static Response getBookingsByName(String firstname, String lastname){
         return given().spec(baseSpecGetBooking)
-                .when().get(Endpoints.BOOKING + "?firstname=" + firstname + "&lastname=" + lastname)
+                .queryParam("firstname", firstname)
+                .queryParam("lastname", lastname)
+                .when().get(Endpoints.BOOKING)
                 .then().log().all().extract().response();
     }
 
     public static Response getBookingsByCheckinAndCheckout(LocalDate checkin, LocalDate checkout){
         return given().spec(baseSpecGetBooking)
-                .when().get(Endpoints.BOOKING + "?checkin=" + checkin + "&checkout=" + checkout)
+                .queryParam("checkin", checkin)
+                .queryParam("checkout", checkout)
+                .when().get(Endpoints.BOOKING)
                 .then().log().all().extract().response();
     }
 
     public static Response getBooking(int id){
         return given().spec(baseSpecGetBooking)
-                .when().get(Endpoints.BOOKING + "/" + id)
+                .pathParam("id", id)
+                .when().get(Endpoints.BOOKING_ID)
                 .then().log().all().extract().response();
     }
 
@@ -47,21 +51,24 @@ public class BookingService {
 
     public static Response updateBooking(String username, String password, int id, BookingRequest bookingBody){
         return given().spec(RequestSpecifications.baseSpecUpdateBooking(username, password))
+                .pathParam("id", id)
                 .body(bookingBody)
-                .when().put(Endpoints.BOOKING + "/" + id)
+                .when().put(Endpoints.BOOKING_ID)
                 .then().log().all().extract().response();
     }
 
     public static Response partialUpdateBooking(String username, String password, int id, Map<String, Object> updates){
         return given().spec(RequestSpecifications.baseSpecUpdateBooking(username, password))
+                .pathParam("id", id)
                 .body(updates)
-                .when().patch(Endpoints.BOOKING + "/" + id)
+                .when().patch(Endpoints.BOOKING_ID)
                 .then().log().all().extract().response();
     }
 
     public static Response deleteBooking(String username, String password, int id){
         return given().spec(RequestSpecifications.baseSpecDeleteBooking(username, password))
-                .when().delete(Endpoints.BOOKING + "/" + id)
+                .pathParam("id", id)
+                .when().delete(Endpoints.BOOKING_ID)
                 .then().log().all().extract().response();
     }
 

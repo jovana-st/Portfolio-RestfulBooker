@@ -1,14 +1,14 @@
 package models;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NonNull;
+import lombok.Value;
 
 @Value
 @AllArgsConstructor
 public class AuthRequest {
 
-    @NonNull String username;
-    @NonNull String password;
-
+    String username;
+    String password;
 
 }

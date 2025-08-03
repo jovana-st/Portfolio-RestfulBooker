@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class PartialUpdateBookingTests {
 
-    int bookingId = -1;
+    private int bookingId;
     BookingRequest originalBooking = new BookingRequest();
 
     @BeforeMethod

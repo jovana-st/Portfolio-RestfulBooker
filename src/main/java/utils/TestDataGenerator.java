@@ -3,6 +3,7 @@ import com.github.javafaker.Faker;
 import models.AuthRequest;
 import models.BookingDates;
 import models.BookingRequest;
+import org.testng.annotations.DataProvider;
 import org.testng.internal.invokers.Arguments;
 
 import java.time.LocalDate;
@@ -24,8 +25,8 @@ public class TestDataGenerator {
         bookingRequest.setDepositpaid(faker.bool().bool());
         bookingRequest.setAdditionalneeds(faker.lorem().sentence(1));
 
-        LocalDate checkIn = LocalDate.now().plusDays(faker.number().numberBetween(1,15));
-        LocalDate checkOut = checkIn.plusDays(faker.number().numberBetween(1,15));
+        LocalDate checkIn = checkInGenerator();
+        LocalDate checkOut = checkOutGenerator(checkIn);
         BookingDates bookingDates = new BookingDates(checkIn.toString(),checkOut.toString());
         bookingRequest.setBookingdates(bookingDates);
 
@@ -47,13 +48,12 @@ public class TestDataGenerator {
         return LocalDate.now().plusDays(faker.number().numberBetween(1, 15));
     }
 
-    public static LocalDate checkOutGenerator(){
-        return LocalDate.now().plusDays(faker.number().numberBetween(15, 30));
+    public static LocalDate checkOutGenerator(LocalDate checkin){
+        return checkin.plusDays(faker.number().numberBetween(1, 15));
     }
 
     public static int generateInvalidBookingId(){
         int id = faker.number().numberBetween(10000, 1500);
         return id;
     }
-
 }
