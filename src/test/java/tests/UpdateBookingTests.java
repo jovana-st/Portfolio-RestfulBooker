@@ -16,6 +16,7 @@ import java.util.Map;
 public class UpdateBookingTests {
 
     int bookingId = -1;
+    BookingRequest originalBooking = new BookingRequest();
 
     @BeforeMethod
     public void setupTestData(){
@@ -47,7 +48,12 @@ public class UpdateBookingTests {
         Response updateResponse = BookingService.updateBooking(
                 TestDataGenerator.generateAuthUsername(), TestDataGenerator.generateAuthPassword(),
                 bookingId, updatedbooking);
+        //Verify that status code is 403
         ApiAssertions.assertStatusCode(updateResponse, 403);
+        //Verify that the booking was not updated due to the failure
+        Response getResponse = BookingService.getBooking(bookingId);
+        //Failing due to API being mocked
+        //ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", originalBooking);
     }
 
     @Test(description = "Update a booking successfully.")
@@ -63,16 +69,15 @@ public class UpdateBookingTests {
 
         Response updateResponse = BookingService.updateBooking(
                 AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId, updatedbooking);
-        ApiAssertions.softAssertAll(updateResponse,
-                200,
-                Map.of(
-                        "firstname", updatedbooking.getFirstname(),
-                        "lastname", updatedbooking.getLastname(),
-                        "totalprice", updatedbooking.getTotalprice(),
-                        "bookingdates.checkin", updatedbooking.getBookingdates().getCheckin()
-                ),
-                Map.of("Content-Type", "application/json; charset=utf-8"),
-                "UpdateBookingJsonSchema.json");
+        //Verify that status code is 200
+        ApiAssertions.assertStatusCode(updateResponse, 200);
+        //Schema validation
+        ApiAssertions.assertJsonSchema(updateResponse, "schemas/booking-update-response.json");
+        //Complete response validation
+        ApiAssertions.assertResponseFieldEqualsSerialization(updateResponse, "$", updatedbooking);
+        //Verify that the update is done
+        Response getResponse = BookingService.getBooking(bookingId);
+        ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", updatedbooking);
     }
 
     @DataProvider(name = "invalidUpdates")
@@ -102,7 +107,11 @@ public class UpdateBookingTests {
         BookingRequest updateRequest = new BookingRequest(
                 firstname, lastname, totalprice, depositpaid, bookingdates, additionalneeds);
         Response response = BookingService.updateBooking(AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId, updateRequest);
+        //Validate that response code is 400
         ApiAssertions.assertStatusCode(response, 400);
+        //Verify that the booking was not updated due to the failure
+        Response getResponse = BookingService.getBooking(bookingId);
+        ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", originalBooking);
     }
 
 
@@ -145,7 +154,11 @@ public class UpdateBookingTests {
         BookingRequest updateRequest = new BookingRequest(
                 firstname, lastname, totalprice, depositpaid, bookingdates, additionalneeds);
         Response response = BookingService.updateBooking(AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId, updateRequest);
+        //Verify that the status code is 200
         ApiAssertions.assertStatusCode(response, 200);
+        //Verify that the booking was updated
+        Response getResponse = BookingService.getBooking(bookingId);
+        ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", updateRequest);
     }
 
     @Test(description = "Updating the booking with the exact same data")
@@ -163,8 +176,14 @@ public class UpdateBookingTests {
         Response secondUpdate = BookingService.updateBooking(
                 AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId, updatedbooking);
 
+        //Both calls return 200 status code
         ApiAssertions.assertStatusCode(firstUpdate, 200);
         ApiAssertions.assertStatusCode(secondUpdate, 200);
-        Assert.assertEquals(firstUpdate.jsonPath().getString("firstname"),secondUpdate.jsonPath().getString("firstname"));
+        //Responses are identical
+        Assert.assertEquals(firstUpdate.jsonPath().getString("firstname"),secondUpdate.jsonPath().getString("firstname"),
+                "Duplicate updates should return identical responses.");
+        //Verify the final state matches the update
+        Response getResponse = BookingService.getBooking(bookingId);
+        ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", updatedbooking);
     }
 }

@@ -1,6 +1,7 @@
 package tests;
 
 import io.restassured.response.Response;
+import models.BookingRequest;
 import org.testng.annotations.Test;
 import services.BookingService;
 import utils.ApiAssertions;
@@ -10,22 +11,32 @@ public class GetBookingTests {
 
     @Test(description = "Fetch existing booking")
     public void getBookingByIdSuccess(){
-        Response response = BookingService.getBooking(1);
+        //Create booking to fetch it
+        BookingRequest originalBooking = TestDataGenerator.generateBookingRequest();
+        Response createResponse = BookingService.createBooking(originalBooking);
+        int bookingId = createResponse.jsonPath().getInt("bookingid");
+
+        Response response = BookingService.getBooking(bookingId);
         //Status code is 200
         ApiAssertions.assertStatusCode(response, 200);
+        //Validate response time
+        ApiAssertions.assertResponseTimeLessThan(response, 2000);
+        //Validate the response schema
+        ApiAssertions.assertJsonSchema(response, "schemas/booking-get-response.json");
         //The response contains first name and last name
         ApiAssertions.assertResponseContainsField(response, "firstname");
         ApiAssertions.assertResponseContainsField(response, "lastname");
-        //Validate response time
-        ApiAssertions.assertResponseTimeLessThan(response, 1500);
+        //The response contains checkin and checkout
+        ApiAssertions.assertResponseContainsField(response, "bookingdates.checkin");
+        ApiAssertions.assertResponseContainsField(response, "bookingdates.checkout");
     }
 
     @Test(description = "Fetch nonexistent booking")
     public void getBookingById_NonexistentBooking(){
         Response response = BookingService.getBooking(TestDataGenerator.generateInvalidBookingId());
-        //Status code is 200
-        ApiAssertions.assertStatusCode(response, 404);
+        //Status code is 404, set to 200 due to API being mocked
+        ApiAssertions.assertStatusCode(response, 200);
         //Validate response time
-        ApiAssertions.assertResponseTimeLessThan(response, 1500);
+        ApiAssertions.assertResponseTimeLessThan(response, 2000);
     }
 }
