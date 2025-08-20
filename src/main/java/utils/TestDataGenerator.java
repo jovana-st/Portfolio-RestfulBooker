@@ -1,10 +1,7 @@
 package utils;
 import com.github.javafaker.Faker;
-import models.AuthRequest;
 import models.BookingDates;
 import models.BookingRequest;
-import org.testng.annotations.DataProvider;
-import org.testng.internal.invokers.Arguments;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

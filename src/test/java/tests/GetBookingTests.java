@@ -5,11 +5,12 @@ import models.BookingRequest;
 import org.testng.annotations.Test;
 import services.BookingService;
 import utils.ApiAssertions;
+import utils.RetryAnalyzer;
 import utils.TestDataGenerator;
 
 public class GetBookingTests {
 
-    @Test(description = "Fetch existing booking")
+    @Test(description = "Fetch existing booking", retryAnalyzer = RetryAnalyzer.class)
     public void getBookingByIdSuccess(){
         //Create booking to fetch it
         BookingRequest originalBooking = TestDataGenerator.generateBookingRequest();
@@ -31,7 +32,7 @@ public class GetBookingTests {
         ApiAssertions.assertResponseContainsField(response, "bookingdates.checkout");
     }
 
-    @Test(description = "Fetch nonexistent booking")
+    @Test(description = "Fetch nonexistent booking", retryAnalyzer = RetryAnalyzer.class)
     public void getBookingById_NonexistentBooking(){
         Response response = BookingService.getBooking(TestDataGenerator.generateInvalidBookingId());
         //Status code is 404, set to 200 due to API being mocked

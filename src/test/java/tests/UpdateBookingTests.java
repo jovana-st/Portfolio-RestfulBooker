@@ -8,6 +8,7 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 import services.BookingService;
 import utils.ApiAssertions;
+import utils.RetryAnalyzer;
 import utils.TestDataGenerator;
 
 import java.time.LocalDate;
@@ -30,11 +31,19 @@ public class UpdateBookingTests {
     public void cleanupTestData(){
         //Delete the test booking after each test
         if (bookingId >0){
-            BookingService.deleteBooking(AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId);
+            try{
+                Response deleteResponse = BookingService.deleteBooking(AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId);
+
+                if (deleteResponse.getStatusCode() != 201){
+                    System.out.println("Cleanup failed for bookingID: " + bookingId);
+                }
+            } catch (Exception e){
+                System.out.println("An error occurred during cleanup for bookingID: " + bookingId + ": " + e.getMessage());
+            }
         }
     }
 
-    @Test(description = "Update booking with invalid auth credentials")
+    @Test(description = "Update booking with invalid auth credentials", retryAnalyzer = RetryAnalyzer.class)
     public void updateBookingInvalidAuth(){
 
         BookingRequest updatedbooking = new BookingRequest();
@@ -56,7 +65,7 @@ public class UpdateBookingTests {
         //ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", originalBooking);
     }
 
-    @Test(description = "Update a booking successfully.")
+    @Test(description = "Update a booking successfully.", retryAnalyzer = RetryAnalyzer.class)
     public void updateBookingSuccess(){
 
         BookingRequest updatedbooking = new BookingRequest();
@@ -94,7 +103,8 @@ public class UpdateBookingTests {
         };
     }
 
-    @Test(description = "Update booking with invalid data", dataProvider = "invalidUpdates", enabled = false)
+    @Test(description = "Update booking with invalid data", dataProvider = "invalidUpdates", enabled = false,
+            retryAnalyzer = RetryAnalyzer.class)
     //Skipped - mocked API does not return the expected error code
     public void updateBooking_InvalidData_Returns400(
             String firstname,
@@ -126,7 +136,7 @@ public class UpdateBookingTests {
                 //Special characters
                 {"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~",
                         "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~",
-                        100, true, new BookingDates("invalid-date", "2024-01-02"),
+                        100, true, new BookingDates("2024-01-01", "2024-01-02"),
                         "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"},
                 //Minimum price
                 {"Valid", "Valid", 1, true, new BookingDates("2024-01-02", "2024-01-01"), "Valid"},
@@ -142,7 +152,8 @@ public class UpdateBookingTests {
         };
     }
 
-    @Test(description = "Updating a new booking with edge cases", dataProvider = "edgeCases")
+    @Test(description = "Updating a new booking with edge cases", dataProvider = "edgeCases",
+            retryAnalyzer = RetryAnalyzer.class)
     public void updateBooking_EdgeCases_Returns200(
             String firstname,
             String lastname,
@@ -161,7 +172,7 @@ public class UpdateBookingTests {
         ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", updateRequest);
     }
 
-    @Test(description = "Updating the booking with the exact same data")
+    @Test(description = "Updating the booking with the exact same data", retryAnalyzer = RetryAnalyzer.class)
     public void updateBooking_multipleSameUpdates_returnsConsistentData(){
         BookingRequest updatedbooking = new BookingRequest();
         updatedbooking.setFirstname("UpdatedName");

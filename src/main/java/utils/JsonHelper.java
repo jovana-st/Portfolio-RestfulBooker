@@ -2,12 +2,7 @@ package utils;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,16 +10,6 @@ public class JsonHelper {
 
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
-            /*.registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
-                @Override
-                public void write(JsonWriter out, LocalDate value) throws IOException{
-                    out.value(value.toString());
-                }
-                @Override
-                public LocalDate read(JsonReader in) throws IOException {
-                    return LocalDate.parse(in.nextString());
-                }
-            })*/
             .create();
 
     //Serialize Object > JSON

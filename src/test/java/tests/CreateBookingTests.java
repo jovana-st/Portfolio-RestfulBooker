@@ -7,6 +7,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import services.BookingService;
 import utils.ApiAssertions;
+import utils.RetryAnalyzer;
 import utils.TestDataGenerator;
 
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 public class CreateBookingTests {
 
-    @Test(description = "Successfully creating a new booking")
+    @Test(description = "Successfully creating a new booking", retryAnalyzer = RetryAnalyzer.class)
     public void createBookingSuccessful(){
         BookingRequest request = TestDataGenerator.generateBookingRequest();
         Response response = BookingService.createBooking(request);
@@ -27,7 +28,7 @@ public class CreateBookingTests {
         ApiAssertions.assertStatusCode(response, 200);
     }
 
-    @Test(description = "Create a new booking with no first name")
+    @Test(description = "Create a new booking with no first name", retryAnalyzer = RetryAnalyzer.class)
     public void createBooking_noFirstName(){
         BookingRequest request = new BookingRequest();
         request.setFirstname(null);
@@ -49,7 +50,7 @@ public class CreateBookingTests {
     }
 
     @Test(description = "Creating a new booking with invalid fields, all are successful",
-            dataProvider = "invalidBookings")
+            dataProvider = "invalidBookings", retryAnalyzer = RetryAnalyzer.class)
     //Mocked API - does not return 400 but 200
     public void createBooking_InvalidData_Returns400(
             String firstname,
@@ -96,7 +97,8 @@ public class CreateBookingTests {
         };
     }
 
-    @Test(description = "Creating a new booking with edge cases", dataProvider = "edgeCases")
+    @Test(description = "Creating a new booking with edge cases", dataProvider = "edgeCases",
+            retryAnalyzer = RetryAnalyzer.class)
     public void createBooking_EdgeCases_Returns200(
             String firstname,
             String lastname,

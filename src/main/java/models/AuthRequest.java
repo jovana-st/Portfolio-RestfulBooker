@@ -1,7 +1,6 @@
 package models;
-import lombok.AccessLevel;
+
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import lombok.Value;
 
 @Value

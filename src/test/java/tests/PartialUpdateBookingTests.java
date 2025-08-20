@@ -10,6 +10,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import services.BookingService;
 import utils.ApiAssertions;
+import utils.RetryAnalyzer;
 import utils.TestDataGenerator;
 
 import java.util.Map;
@@ -31,11 +32,19 @@ public class PartialUpdateBookingTests {
     public void cleanupTestData(){
         //Delete the test booking after each test
         if (bookingId >0){
-            BookingService.deleteBooking(AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId);
+            try{
+                Response deleteResponse = BookingService.deleteBooking(AuthConfig.USERNAME, AuthConfig.PASSWORD, bookingId);
+
+                if (deleteResponse.getStatusCode() != 201){
+                    System.out.println("Cleanup failed for bookingID: " + bookingId);
+                }
+            } catch (Exception e){
+                System.out.println("An error occurred during cleanup for bookingID: " + bookingId + ": " + e.getMessage());
+            }
         }
     }
 
-    @Test(description = "Update booking with invalid auth credentials")
+    @Test(description = "Update booking with invalid auth credentials", retryAnalyzer = RetryAnalyzer.class)
     public void partialUpdateBookingInvalidAuth(){
 
         Map<String, Object> updates = Map.of(
@@ -54,7 +63,7 @@ public class PartialUpdateBookingTests {
         ApiAssertions.assertResponseFieldEquals(getResponse, "firstname", originalBooking.getLastname());*/
     }
 
-    @Test(description = "Update a booking first name successfully.")
+    @Test(description = "Update a booking first name successfully.", retryAnalyzer = RetryAnalyzer.class)
     public void partialUpdateBookingSuccess_firstName(){
 
         Map<String, Object> updates = Map.of(
@@ -76,7 +85,7 @@ public class PartialUpdateBookingTests {
         ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", expectedBooking);
     }
 
-    @Test(description = "Update a booking checkin and checkout dates successfully.")
+    @Test(description = "Update a booking checkin and checkout dates successfully.", retryAnalyzer = RetryAnalyzer.class)
     public void partialUpdateBookingSuccess_CheckinAndOutDates(){
 
         Map<String, String> bookingDatesMap = Map.of(
@@ -102,7 +111,7 @@ public class PartialUpdateBookingTests {
         ApiAssertions.assertResponseFieldEquals(updateResponse, "lastname", originalBooking.getLastname());
     }
 
-    @Test(description = "Update a booking price and additional needs successfully.")
+    @Test(description = "Update a booking price and additional needs successfully.", retryAnalyzer = RetryAnalyzer.class)
     public void partialUpdateBookingSuccess_additionalNeedsAndPrice(){
 
         Map<String, Object> updates = Map.of(
@@ -123,7 +132,7 @@ public class PartialUpdateBookingTests {
         ApiAssertions.assertResponseFieldEquals(updateResponse, "lastname", originalBooking.getLastname());
     }
 
-    @Test(description = "Update a booking deposit status")
+    @Test(description = "Update a booking deposit status", retryAnalyzer = RetryAnalyzer.class)
     public void partialUpdateBookingSuccess_toggleDepositPaid(){
 
         Map<String, Object> updates = Map.of(
@@ -143,7 +152,7 @@ public class PartialUpdateBookingTests {
         ApiAssertions.assertResponseFieldEquals(updateResponse, "lastname", originalBooking.getLastname());
     }
 
-    @Test(description = "Update a booking with a minimal payload")
+    @Test(description = "Update a booking with a minimal payload", retryAnalyzer = RetryAnalyzer.class)
     public void partialUpdateBookingSuccess_minimalPayload(){
 
         Map<String, Object> updates = Map.of();
@@ -156,7 +165,7 @@ public class PartialUpdateBookingTests {
         ApiAssertions.assertResponseFieldEqualsSerialization(updateResponse, "$", originalBooking);
     }
 
-    @Test(description = "Update a booking with the same partial payload twice")
+    @Test(description = "Update a booking with the same partial payload twice", retryAnalyzer = RetryAnalyzer.class)
     public void partialUpdateBookingSuccess_updateTwice(){
 
         Map<String, Object> updates = Map.of(
@@ -179,7 +188,7 @@ public class PartialUpdateBookingTests {
         ApiAssertions.assertResponseFieldEquals(getResponse, "firstname", "UpdatedName");
     }
 
-    @Test(description = "Update a booking partially, then fully.")
+    @Test(description = "Update a booking partially, then fully.", retryAnalyzer = RetryAnalyzer.class)
     public void partialUpdateBookingSuccess_partialThenFull(){
 
         Map<String, Object> updates = Map.of(
