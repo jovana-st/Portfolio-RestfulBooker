@@ -1,5 +1,6 @@
 package utils;
 
+import com.google.gson.JsonParseException;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
@@ -69,6 +70,38 @@ public class ApiAssertions {
         Assert.assertEquals(response.jsonPath().getBoolean(fieldName), expected);
     }
 
+    //Assert response field - with JSON serialization
+    public static <T> void assertResponseFieldEqualsSerialization(Response response, String fieldName, T expectedObject){
+        Object actualValue = response.jsonPath().get(fieldName);
+        String actualJson = JsonHelper.toJson(actualValue);
+        String expectedJson = JsonHelper.toJson(expectedObject);
+
+        Assert.assertEquals(actualJson, expectedJson,
+                "Field: " + fieldName + " comparison mismatch.");
+    }
+
+    //Assert complete response against expected object
+    public static <T> void assertResponseMatchesObject(Response response, Class<T> clazz, T expectedObject){
+        T actualObject = JsonHelper.fromJson(response.getBody().asString(), clazz);
+        Assert.assertEquals(actualObject, expectedObject,
+                "Response object mismatch.");
+    }
+
+    //Assert complete response against list responses
+    public static <T> void assertResponseMatchesList(Response response, Class<T> elementType, List<T> expectedList){
+        List<T> actualList = JsonHelper.fromJsonList(response.getBody().asString(), elementType);
+        Assert.assertEquals(actualList, expectedList,
+                "Response list mismatch");
+    }
+
+    //Enhanced Schema Validation
+    public static void assertResponseStructure(Response response, Class<?> expectedClass){
+        try{
+            JsonHelper.fromJson(response.getBody().asString(), expectedClass);
+        } catch(JsonParseException e){
+            Assert.fail("Response structure doesn't match expected class: " + e.getMessage());
+        }
+    }
 
     //Soft Assertions
     //Assert that the status code is a specific value
@@ -182,6 +215,18 @@ public class ApiAssertions {
             }
         }
 
+        softAssert.assertAll();
+    }
+
+    //Soft assert response field - with JSON serialization
+    public static <T> void softAssertResponseFieldEquals(Response response, String fieldName, T expectedObject){
+        SoftAssert softAssert = new SoftAssert();
+        Object actualValue = response.jsonPath().get(fieldName);
+        String actualJson = JsonHelper.toJson(actualValue);
+        String expectedJson = JsonHelper.toJson(expectedObject);
+
+        softAssert.assertEquals(actualJson, expectedJson,
+                "Field: " + fieldName + " comparison mismatch.");
         softAssert.assertAll();
     }
 

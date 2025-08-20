@@ -19,15 +19,16 @@ public class GetBookingIdsTests {
         Response response = BookingService.getBookingIds();
         //Status code is 200
         ApiAssertions.assertStatusCode(response, 200);
+        //The response time is less than 2000ms
+        ApiAssertions.assertResponseTimeLessThan(response, 2000);
+        //The response structure is correct
+        ApiAssertions.assertJsonSchema(response, "schemas/booking-ids-response.json");
+
         //The response contains the required fields
         List<BookingResponse> bookings = JsonHelper.fromJsonList(response.asString(), BookingResponse.class);
         if(!bookings.isEmpty()){
             bookings.forEach( b -> Assert.assertNotNull(b.getBookingid(), "Booking ID missing"));
         }
-        //The response structure is checked
-        ApiAssertions.assertJsonSchema(response, "BookingIdsJsonSchemaFile.json");
-        //The response time is under ms
-        ApiAssertions.assertResponseTimeLessThan(response, 2000);
     }
 
     @Test(description = "Filter the booking IDs by name")
@@ -35,15 +36,16 @@ public class GetBookingIdsTests {
         Response response = BookingService.getBookingsByName("sally", "brown");
         //Status code is 200
         ApiAssertions.assertStatusCode(response, 200);
+        //The response structure is checked
+        ApiAssertions.assertJsonSchema(response, "schemas/booking-ids-response.json");
+        //The response time is less than 2000ms
+        ApiAssertions.assertResponseTimeLessThan(response, 2000);
         //The response contains the required fields
         List<BookingResponse> bookings = JsonHelper.fromJsonList(response.asString(), BookingResponse.class);
         if(!bookings.isEmpty()){
             bookings.forEach( b -> Assert.assertNotNull(b.getBookingid(), "Booking ID missing"));
         }
-        //The response structure is checked
-        ApiAssertions.assertJsonSchema(response, "BookingIdsJsonSchemaFile.json");
-        //The response time is under ms
-        ApiAssertions.assertResponseTimeLessThan(response, 2000);
+
     }
 
     @Test(description = "Filter the booking IDs by a non-existent name")
@@ -61,15 +63,15 @@ public class GetBookingIdsTests {
                 LocalDate.parse("2014-03-13"), LocalDate.parse("2014-05-21"));
         //Status code is 200
         ApiAssertions.assertStatusCode(response, 200);
+        //The response structure is checked
+        ApiAssertions.assertJsonSchema(response, "schemas/booking-ids-response.json");
+        //The response time is under 2000ms
+        ApiAssertions.assertResponseTimeLessThan(response, 2000);
         //The response contains the required fields
         List<BookingResponse> bookings = JsonHelper.fromJsonList(response.asString(), BookingResponse.class);
         if(!bookings.isEmpty()){
             bookings.forEach( b -> Assert.assertNotNull(b.getBookingid(), "Booking ID missing"));
         }
-        //The response structure is checked
-        ApiAssertions.assertJsonSchema(response, "BookingIdsJsonSchemaFile.json");
-        //The response time is under ms
-        ApiAssertions.assertResponseTimeLessThan(response, 2000);
     }
 
     @Test(description = "Filter by nonexistent date range")

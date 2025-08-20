@@ -14,22 +14,17 @@ import java.util.Map;
 
 public class CreateBookingTests {
 
-    @Test(description = "Sucessfully creating a new booking")
+    @Test(description = "Successfully creating a new booking")
     public void createBookingSuccessful(){
         BookingRequest request = TestDataGenerator.generateBookingRequest();
         Response response = BookingService.createBooking(request);
-        //Validate that the response schema is correct
-        ApiAssertions.assertJsonSchema(response, "BookingJsonSchemaFile.json");
-        ApiAssertions.softAssertAll(response,
-                200,
-                Map.of(
-                        "booking.firstname", request.getFirstname(),
-                        "booking.lastname", request.getLastname(),
-                        "booking.totalprice", request.getTotalprice(),
-                        "booking.bookingdates.checkin", request.getBookingdates().getCheckin()
-                ),
-                Map.of("Content-Type", "application/json; charset=utf-8"),
-                "BookingJsonSchemaFile.json");
+
+        //Verify that the response schema is correct
+        ApiAssertions.assertJsonSchema(response, "schemas/booking-create-response.json");
+        //Complete object validation
+        ApiAssertions.assertResponseFieldEqualsSerialization(response, "booking", request);
+        //Verify that status code is correct
+        ApiAssertions.assertStatusCode(response, 200);
     }
 
     @Test(description = "Create a new booking with no first name")
@@ -37,7 +32,7 @@ public class CreateBookingTests {
         BookingRequest request = new BookingRequest();
         request.setFirstname(null);
         Response response = BookingService.createBooking(request);
-        //Validate that the response schema is correct
+        //Verify that status code is correct
         ApiAssertions.assertStatusCode(response, 500);
     }
 
@@ -55,7 +50,7 @@ public class CreateBookingTests {
 
     @Test(description = "Creating a new booking with invalid fields, all are successful",
             dataProvider = "invalidBookings")
-    //Skipped - mocked API does not return the expected error code
+    //Mocked API - does not return 400 but 200
     public void createBooking_InvalidData_Returns400(
             String firstname,
             String lastname,
@@ -66,7 +61,12 @@ public class CreateBookingTests {
     ) {
         BookingRequest request = new BookingRequest(firstname, lastname, totalprice, depositpaid, bookingdates, additionalneeds);
         Response response = BookingService.createBooking(request);
-        ApiAssertions.assertStatusCode(response, 200);
+        //Using soft assertion to capture multiple possible issues
+        ApiAssertions.softAssertAll(response,
+                200,
+                Map.of(),
+                Map.of("Content-Type", "application/json; charset=utf-8"),
+                null);
     }
 
     @DataProvider(name = "edgeCases")
@@ -107,7 +107,12 @@ public class CreateBookingTests {
     ) {
         BookingRequest request = new BookingRequest(firstname, lastname, totalprice, depositpaid, bookingdates, additionalneeds);
         Response response = BookingService.createBooking(request);
+        //Use soft deep comparison to catch ALL field mismatches
+        ApiAssertions.softAssertResponseFieldEquals(response, "booking", request);
+        //Verify that status code is correct
         ApiAssertions.assertStatusCode(response, 200);
+        //Verify that the schema is correct
+        ApiAssertions.assertJsonSchema(response, "schemas/booking-create-response.json");
     }
 
 }
