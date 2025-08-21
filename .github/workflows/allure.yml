@@ -1,10 +1,10 @@
-name: Tests with Allure
+name: Tests with Allure (Manual)
 
 on:
   workflow_dispatch:
 
 jobs:
-  test:
+  allure-tests:
     runs-on: ubuntu-latest
     
     steps:
@@ -17,11 +17,18 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
-    - name: Run tests and generate Allure report
-      run: mvn test allure:report
+    - name: Run tests
+      run: mvn test
       
+    - name: Generate Allure report
+      run: |
+        # Download Allure commandline directly
+        wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+        tar -zxvf allure-2.24.0.tgz
+        ./allure-2.24.0/bin/allure generate target/allure-results -o target/site/allure-report
+        
     - name: Upload Allure report
       uses: actions/upload-artifact@v4
       with:
         name: allure-report
-        path: target/site/allure-maven-plugin/
+        path: target/site/allure-report/
