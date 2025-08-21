@@ -23,6 +23,9 @@
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-maven-plugin</artifactId>
             <version>2.12.0</version>
+            <configuration>
+                <reportVersion>2.24.0</reportVersion>
+            </configuration>
         </plugin>
 
         </plugins>
