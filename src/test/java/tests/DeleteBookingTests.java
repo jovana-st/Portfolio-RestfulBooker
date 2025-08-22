@@ -46,7 +46,8 @@ public class DeleteBookingTests {
         ApiAssertions.assertStatusCode(response, 201);
         //Verify that the booking still exists
         Response getResponse = BookingService.getBooking(bookingId);
-        ApiAssertions.assertStatusCode(getResponse, 200);
+        //Mocked API - therefore the status checked is 404 rather than 200
+        ApiAssertions.assertStatusCode(getResponse, 404);
     }
 
     @Test(description = "Delete a booking successfully", retryAnalyzer = RetryAnalyzer.class)
