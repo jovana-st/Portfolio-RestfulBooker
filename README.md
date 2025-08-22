@@ -22,7 +22,6 @@ src/
 │   │   ├── utils/        # Utility classes
 │   └── resources/
 │       ├── schemas/      # JSON schema definitions
-│       └── testng.xml    # Test configuration
 └── test/
     └── java/
         └── tests/        # Test implementations
