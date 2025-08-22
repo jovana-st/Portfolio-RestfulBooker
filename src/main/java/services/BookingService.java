@@ -29,8 +29,8 @@ public class BookingService {
 
     public static Response getBookingsByCheckinAndCheckout(LocalDate checkin, LocalDate checkout){
         return given().spec(baseSpecGetBooking)
-                .queryParam("checkin", checkin)
-                .queryParam("checkout", checkout)
+                .queryParam("checkin", checkin.toString())
+                .queryParam("checkout", checkout.toString())
                 .when().get(Endpoints.BOOKING)
                 .then().log().all().extract().response();
     }
@@ -71,6 +71,7 @@ public class BookingService {
                 .when().delete(Endpoints.BOOKING_ID)
                 .then().log().all().extract().response();
     }
+
 
 
 }
