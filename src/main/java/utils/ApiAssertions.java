@@ -103,6 +103,12 @@ public class ApiAssertions {
         }
     }
 
+    //Asserts that a string is a valid ISO date (yyyy-mm-dd) format
+    public static void assertValidIsoDate(String dateString){
+        Assert.assertTrue(RegexHelper.isValidDate(dateString),
+                "The date is not a valid format");
+    }
+
     //Soft Assertions
     //Assert that the status code is a specific value
     public static void softAssertStatusCode(Response response, int expectedStatusCode){

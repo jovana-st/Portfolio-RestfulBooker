@@ -35,8 +35,8 @@ public class GetBookingTests {
     @Test(description = "Fetch nonexistent booking", retryAnalyzer = RetryAnalyzer.class)
     public void getBookingById_NonexistentBooking(){
         Response response = BookingService.getBooking(TestDataGenerator.generateInvalidBookingId());
-        //Status code is 404, set to 200 due to API being mocked
-        ApiAssertions.assertStatusCode(response, 200);
+        //Status code is 404
+        ApiAssertions.assertStatusCode(response, 404);
         //Validate response time
         ApiAssertions.assertResponseTimeLessThan(response, 2000);
     }
