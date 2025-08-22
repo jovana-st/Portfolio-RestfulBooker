@@ -20,10 +20,8 @@ src/
 │   │   ├── services/     # API service layers
 │   │   ├── specs/        # Request specifications
 │   │   ├── utils/        # Utility classes
-│   │   └── listeners/    # TestNG listeners
 │   └── resources/
 │       ├── schemas/      # JSON schema definitions
-│       └── testng.xml    # Test configuration
 └── test/
     └── java/
         └── tests/        # Test implementations
