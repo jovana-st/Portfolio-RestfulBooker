@@ -12,7 +12,6 @@ import utils.RetryAnalyzer;
 import utils.TestDataGenerator;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 public class UpdateBookingTests {
 
@@ -43,7 +42,7 @@ public class UpdateBookingTests {
         }
     }
 
-    @Test(description = "Update booking with invalid auth credentials, disabled due to API returning 200", retryAnalyzer = RetryAnalyzer.class, enabled = false)
+    @Test(description = "Update booking with invalid auth credentials", retryAnalyzer = RetryAnalyzer.class)
     public void updateBookingInvalidAuth(){
 
         BookingRequest updatedbooking = new BookingRequest();
@@ -197,5 +196,4 @@ public class UpdateBookingTests {
         Response getResponse = BookingService.getBooking(bookingId);
         ApiAssertions.assertResponseFieldEqualsSerialization(getResponse, "$", updatedbooking);
     }
-
 }
