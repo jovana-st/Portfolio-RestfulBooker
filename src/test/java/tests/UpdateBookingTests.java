@@ -12,7 +12,6 @@ import utils.RetryAnalyzer;
 import utils.TestDataGenerator;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 public class UpdateBookingTests {
 
